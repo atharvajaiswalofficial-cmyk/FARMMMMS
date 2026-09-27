@@ -146,8 +146,9 @@ export default function VoiceAssistant() {
         isProcessingRef.current = false;
       }
     } catch (err) {
-      console.error('Voice query failed:', err);
-      setErrorMessage(t('common.error'));
+      console.error('[Voice Assistant Query Failed]:', err);
+      const displayErr = err?.data?.detail || err?.message || t('common.error');
+      setErrorMessage(displayErr);
       setLoading(false);
       isProcessingRef.current = false;
     }

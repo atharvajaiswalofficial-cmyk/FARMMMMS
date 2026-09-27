@@ -165,12 +165,14 @@ export default function AIChat() {
         }
       }
     } catch (err) {
+      console.error('[AI Chat Query Failed]:', err);
+      const displayErr = err?.data?.detail || err?.message || t('common.error');
       setMessages([
         ...newMessages,
         {
           id: Date.now() + 1,
           sender: 'bot',
-          text: t('common.error'),
+          text: displayErr,
           grounded: false,
           sources: []
         }

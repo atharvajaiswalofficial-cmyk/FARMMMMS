@@ -1,8 +1,15 @@
-const API_BASE = '/api';
+const rawBase = (typeof import.meta !== 'undefined' && import.meta.env && (import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE || import.meta.env.VITE_BACKEND_URL)) || '';
+const API_BASE = rawBase 
+  ? (rawBase.endsWith('/api') ? rawBase : `${rawBase.replace(/\/+$/, '')}/api`) 
+  : '/api';
 
 function getAuthHeader() {
-  const token = localStorage.getItem('sahayak_token');
-  return token ? { Authorization: `Bearer ${token}` } : {};
+  try {
+    const token = typeof localStorage !== 'undefined' ? localStorage.getItem('sahayak_token') : null;
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  } catch (e) {
+    return {};
+  }
 }
 
 async function request(endpoint, options = {}) {
@@ -13,23 +20,50 @@ async function request(endpoint, options = {}) {
     ...(options.headers || {})
   };
 
-  const response = await fetch(`${API_BASE}${endpoint}`, {
-    ...options,
-    headers
-  });
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  const targetUrl = `${API_BASE}${cleanEndpoint}`;
 
-  const contentType = response.headers.get('content-type') || '';
-  const data = contentType.includes('application/json') ? await response.json() : await response.text();
+  try {
+    const response = await fetch(targetUrl, {
+      ...options,
+      headers
+    });
 
-  if (!response.ok) {
-    const errorMsg = data?.detail || data?.message || (typeof data === 'string' ? data : 'An unexpected error occurred');
-    const error = new Error(errorMsg);
-    error.status = response.status;
-    error.data = data;
-    throw error;
+    const contentType = response.headers.get('content-type') || '';
+    let data;
+
+    if (contentType.includes('application/json')) {
+      data = await response.json();
+    } else {
+      const rawText = await response.text();
+      if (rawText.trim().startsWith('<!DOCTYPE') || rawText.trim().startsWith('<html')) {
+        data = { detail: `Server returned HTML page (${response.status}) instead of API response.` };
+      } else {
+        try {
+          data = JSON.parse(rawText);
+        } catch (e) {
+          data = { detail: rawText || `HTTP error ${response.status}` };
+        }
+      }
+    }
+
+    if (!response.ok) {
+      const errorMsg = data?.detail || data?.message || data?.error || (typeof data === 'string' ? data : `Request failed with status ${response.status}`);
+      console.warn(`[Sahayak API Error] ${options.method || 'GET'} ${cleanEndpoint} (${response.status}):`, errorMsg);
+      const error = new Error(errorMsg);
+      error.status = response.status;
+      error.data = data;
+      throw error;
+    }
+
+    return data;
+  } catch (err) {
+    if (err.status) throw err;
+    console.warn(`[Sahayak API Network Error] ${options.method || 'GET'} ${cleanEndpoint}:`, err.message);
+    const networkError = new Error(err.message || 'Network request failed. Please check your connection.');
+    networkError.status = 0;
+    throw networkError;
   }
-
-  return data;
 }
 
 export const api = {
