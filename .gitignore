@@ -7,8 +7,8 @@ venv/
 
 # Environment Variables & Private Credentials
 .env
-.env.local
-.env.production
+.env.*
+!.env.example
 serviceAccountKey*.json
 *.pem
 *.key

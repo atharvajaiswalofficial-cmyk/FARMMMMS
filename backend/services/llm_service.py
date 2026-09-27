@@ -69,8 +69,8 @@ def call_gemini_sdk(prompt: str) -> Optional[str]:
         return None
 
     # Supported model fallbacks
-    configured_model = os.getenv("GEMINI_MODEL", "").strip() or GEMINI_MODEL or "gemini-2.5-flash"
-    candidate_models = [configured_model, "gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash", "gemini-2.5-pro"]
+    configured_model = os.getenv("GEMINI_MODEL", "").strip() or GEMINI_MODEL or "gemini-3.8-flash"
+    candidate_models = [configured_model, "gemini-3.8-flash", "gemini-3.7-flash", "gemini-flash-latest", "gemini-3.5-flash", "gemini-3.5-flash-lite", "gemini-2.5-flash"]
     # De-duplicate while preserving order
     seen = set()
     models_to_try = [m for m in candidate_models if not (m in seen or seen.add(m))]
