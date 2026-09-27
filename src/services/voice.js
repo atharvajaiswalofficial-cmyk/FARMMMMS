@@ -235,16 +235,27 @@ class VoiceService {
       .trim();
 
     if (this.synthesis) {
+      try {
+        this.synthesis.cancel();
+        if (typeof this.synthesis.resume === 'function') {
+          this.synthesis.resume();
+        }
+      } catch (e) {}
+
       const utterance = new SpeechSynthesisUtterance(cleanText);
       utterance.lang = lang;
       utterance.rate = 0.95;
       utterance.pitch = 1.0;
 
-      const voices = this.synthesis.getVoices();
-      const matchingVoice = voices.find(v => v.lang === lang || v.lang.startsWith(lang.split('-')[0]));
-      if (matchingVoice) {
-        utterance.voice = matchingVoice;
-      }
+      try {
+        const voices = this.synthesis.getVoices();
+        if (voices && voices.length > 0) {
+          const matchingVoice = voices.find(v => v.lang === lang || v.lang.startsWith(lang.split('-')[0]));
+          if (matchingVoice) {
+            utterance.voice = matchingVoice;
+          }
+        }
+      } catch (e) {}
 
       utterance.onend = () => {
         this.currentUtterance = null;
@@ -252,12 +263,18 @@ class VoiceService {
       };
 
       utterance.onerror = (err) => {
-        console.warn('Browser TTS error, falling back to server TTS:', err);
-        this.playServerTTS(cleanText, lang.split('-')[0], onEnd);
+        console.warn('Browser TTS notice:', err?.error || err);
+        this.currentUtterance = null;
+        if (onEnd) onEnd();
       };
 
       this.currentUtterance = utterance;
-      this.synthesis.speak(utterance);
+      try {
+        this.synthesis.speak(utterance);
+      } catch (err) {
+        console.warn('Speech synthesis invocation failed:', err);
+        if (onEnd) onEnd();
+      }
     } else {
       this.playServerTTS(cleanText, lang.split('-')[0], onEnd);
     }
