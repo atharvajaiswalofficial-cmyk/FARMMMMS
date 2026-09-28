@@ -48,6 +48,19 @@ export default function Sidebar({ isOpen, onClose }) {
       `}>
         {/* Navigation list */}
         <div className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+          {/* Government Affiliation Badge for Mobile Drawer */}
+          <div className="flex items-center gap-2.5 px-3 py-2.5 mb-3 rounded-xl bg-slate-800/80 border border-slate-700/60 lg:hidden">
+            <img
+              src="/images/ministry-of-cooperation-logo.png"
+              alt="Ministry of Cooperation, Government of India"
+              className="h-8 w-auto object-contain shrink-0"
+            />
+            <div className="flex flex-col text-left leading-tight">
+              <span className="text-[11px] font-bold text-white">सहकारिता मंत्रालय</span>
+              <span className="text-[9px] text-slate-400">Ministry of Cooperation, GoI</span>
+            </div>
+          </div>
+
           <p className="px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">
             Services & Guidance
           </p>

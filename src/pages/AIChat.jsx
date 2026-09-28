@@ -3,15 +3,15 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { api } from '../services/api';
 import { voiceService } from '../services/voice';
-import { 
-  Send, 
-  Sparkles, 
-  Bot, 
-  FileText, 
-  ExternalLink, 
-  Loader2, 
-  Globe, 
-  ShieldCheck, 
+import {
+  Send,
+  Sparkles,
+  Bot,
+  FileText,
+  ExternalLink,
+  Loader2,
+  Globe,
+  ShieldCheck,
   Trash2,
   Mic,
   MicOff,
@@ -25,7 +25,7 @@ import {
 export default function AIChat() {
   const { user, isAuthenticated } = useAuth();
   const { currentLanguage, setLanguage, languages, getVoiceCode, t, openLanguageModal } = useLanguage();
-  
+
   const [messages, setMessages] = useState([
     {
       id: 0,
@@ -131,7 +131,7 @@ export default function AIChat() {
       const response = await api.sendChatMessage(query, currentLanguage, mode, user?.id);
       const botMsgId = response.chat_id || Date.now() + 1;
       const answerText = response.answer || response.message || response.response || 'Answer retrieved successfully.';
-      
+
       setMessages([
         ...newMessages,
         {
@@ -328,11 +328,10 @@ export default function AIChat() {
             )}
 
             <div
-              className={`max-w-[85%] sm:max-w-xl p-4 rounded-2xl text-xs sm:text-sm leading-relaxed ${
-                m.sender === 'user'
+              className={`max-w-[85%] sm:max-w-xl p-4 rounded-2xl text-xs sm:text-sm leading-relaxed ${m.sender === 'user'
                   ? 'bg-emerald-600 text-white rounded-tr-none shadow-md shadow-emerald-600/10'
                   : 'bg-white text-slate-800 border border-slate-200/80 rounded-tl-none shadow-xs'
-              }`}
+                }`}
             >
               <div className="flex items-start justify-between gap-2">
                 <p className="whitespace-pre-wrap flex-1">{m.text}</p>
@@ -340,11 +339,10 @@ export default function AIChat() {
                   <button
                     onClick={() => handleSpeakToggle(m.id, m.text, m.language)}
                     title={speakingMsgId === m.id ? t('common.stopVoice') : t('common.listenAgain')}
-                    className={`p-1.5 rounded-lg transition-colors flex-shrink-0 ${
-                      speakingMsgId === m.id 
-                        ? 'bg-emerald-100 text-emerald-700 animate-pulse' 
+                    className={`p-1.5 rounded-lg transition-colors flex-shrink-0 ${speakingMsgId === m.id
+                        ? 'bg-emerald-100 text-emerald-700 animate-pulse'
                         : 'text-slate-400 hover:text-emerald-600 hover:bg-slate-100'
-                    }`}
+                      }`}
                   >
                     {speakingMsgId === m.id ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
                   </button>
@@ -435,11 +433,10 @@ export default function AIChat() {
           type="button"
           onClick={handleMicToggle}
           title={isRecording ? t('common.stopVoice') : t('common.startVoice')}
-          className={`p-3 rounded-2xl transition-all flex items-center justify-center ${
-            isRecording 
-              ? 'bg-rose-600 text-white animate-pulse shadow-md shadow-rose-600/30 ring-4 ring-rose-200' 
+          className={`p-3 rounded-2xl transition-all flex items-center justify-center ${isRecording
+              ? 'bg-rose-600 text-white animate-pulse shadow-md shadow-rose-600/30 ring-4 ring-rose-200'
               : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
-          }`}
+            }`}
         >
           {isRecording ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
         </button>
@@ -456,7 +453,7 @@ export default function AIChat() {
           className="flex-1 px-4 py-3 text-xs sm:text-sm bg-slate-50 rounded-2xl border border-slate-200 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all placeholder:text-slate-400"
           disabled={isLoading}
         />
-        
+
         <button
           type="submit"
           disabled={isLoading || !inputMessage.trim()}

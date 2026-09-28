@@ -45,6 +45,20 @@ export default function Topbar({ onToggleSidebar }) {
               <p className="text-[10px] text-slate-500 hidden sm:block font-medium">Agricultural & Cooperative Intelligence</p>
             </div>
           </Link>
+
+          {/* Ministry of Cooperation Government of India Affiliation Logo */}
+          <div className="hidden sm:flex items-center gap-2.5 pl-3 border-l border-slate-200" title="Ministry of Cooperation, Government of India">
+            <img
+              src="/images/ministry-of-cooperation-logo.png"
+              alt="Ministry of Cooperation, Government of India"
+              className="h-9 w-auto object-contain shrink-0"
+              loading="eager"
+            />
+            <div className="hidden lg:flex flex-col text-left leading-tight">
+              <span className="text-[10px] font-bold text-slate-800 tracking-tight">सहकारिता मंत्रालय</span>
+              <span className="text-[9px] font-medium text-slate-500">Ministry of Cooperation</span>
+            </div>
+          </div>
         </div>
 
         {/* Center / Navigation Quick Links */}
